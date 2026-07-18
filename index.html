@@ -92,6 +92,28 @@ h1 em{color:var(--accent);font-style:normal}
 .avatar.new-av{animation:popIn 0.4s ease;border-color:var(--accent)}
 @keyframes popIn{0%{transform:scale(0);opacity:0}60%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
 
+/* Счётчик участников */
+.joined-counter{font-size:15px;color:var(--muted);margin:8px 0 4px;letter-spacing:0.01em}
+.joined-counter strong{color:var(--accent);font-size:20px;font-weight:700}
+
+/* Последнее имя */
+.last-name-block{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 20px;margin:14px auto;max-width:340px;text-align:center}
+.last-name-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+.last-name-value{font-size:18px;font-weight:700;color:var(--text)}
+.last-name-msg{font-size:13px;color:var(--muted);margin-top:3px;font-style:italic}
+.last-name-time{font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px}
+
+/* Мотивация */
+.motivation-block{text-align:center;padding:16px 24px;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;max-width:520px;margin:0 auto 8px}
+
+/* Недавние участники */
+.recent-block{margin:0 auto 20px;max-width:520px;padding:0 24px}
+.recent-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px}
+.recent-list{display:flex;gap:10px;flex-wrap:wrap}
+.recent-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:5px 12px 5px 5px}
+.recent-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.recent-name{font-size:13px;color:var(--text)}
+
 /* TOOLTIP */
 .tooltip{position:absolute;bottom:58px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:1000;min-width:120px;text-align:center}
 .tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--border2)}
@@ -180,8 +202,22 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
 <div class="panel active" id="panel-wall">
   <section class="hero">
     <div id="badge-block" style="display:none"><div class="badge"><span class="pulse"></span><span id="badge-txt">Live · ··· names</span></div></div>
-    <h1 id="h1">One name.<br><em>Forever.</em></h1>
-    <p class="hero-sub" id="sub">Your name, your message, your face — on the Wall forever. First 100 spots: 1 ⭐ (then 150 ⭐)</p>
+    <h1 id="h1">Be one of the first.<br><em>Forever.</em></h1>
+
+    <!-- Счётчик участников — показывается всегда -->
+    <div class="joined-counter" id="joined-counter">
+      <span id="joined-label">Already joined:</span> <strong id="joined-count">···</strong>
+    </div>
+
+    <!-- Последнее имя -->
+    <div class="last-name-block" id="last-name-block" style="display:none">
+      <div class="last-name-label" id="last-name-label">Latest name</div>
+      <div class="last-name-value" id="last-name-value"></div>
+      <div class="last-name-msg" id="last-name-msg"></div>
+      <div class="last-name-time" id="last-name-time"></div>
+    </div>
+
+    <p class="hero-sub" id="sub">Your name, your message, your face — on the Wall forever. First 1000 spots are free!</p>
 
     <div id="stats-block" style="display:none">
     <div class="stats">
@@ -200,12 +236,21 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
       <input type="text" id="nameInput" placeholder="Your name" maxlength="28"/>
     </div>
     <div class="pay-buttons">
-      <button class="btn-pay btn-tg" onclick="handlePay()">✈️ <span id="tg-lbl">Add my name via Telegram — 1 ⭐ (first 100)</span></button>
+      <button class="btn-pay btn-tg" onclick="handlePay()">✈️ <span id="tg-lbl">Add my name via Telegram — Free (first 1000)</span></button>
     </div>
     <p class="pay-note" id="note">Name + message + your avatar · stays forever</p>
   </section>
 
   <div class="wall-section">
+    <!-- Мотивационный блок -->
+    <div class="motivation-block" id="motivation-block"></div>
+
+    <!-- Недавние участники (последние 5) -->
+    <div class="recent-block" id="recent-block" style="display:none">
+      <div class="recent-title" id="recent-title">Recently joined</div>
+      <div class="recent-list" id="recent-list"></div>
+    </div>
+
     <div class="wall-header">
       <span class="wall-title-txt" id="wall-lbl">All names</span>
       <input class="wall-search" type="text" id="searchInput" placeholder="Search name..."/>
@@ -240,18 +285,18 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
   </div>
 </div>
 
-<footer id="footer-txt">Wall of a Million Names · 2025 · Forever</footer>
+<footer id="footer-txt">Wall of a Million Names · 2026 · Forever</footer>
 <div class="toast" id="toast"></div>
 
 <script>
 const T={
   en:{
-    badge:'Live · {n} names',h1:'One name.<br><em>Forever.</em>',
-    sub:'Your name, your message, your face — on the Wall forever. First 100 spots: 1 ⭐ (then 150 ⭐)',
+    badge:'Live · {n} names',h1:'Be one of the first.<br><em>Forever.</em>',
+    sub:'Your name, your message, your face — on the Wall forever. First 1000 spots are free!',
     lbl_names:'names',lbl_raised:'raised',lbl_left:'spots left',
     pct:'% filled',goal:'goal: 1,000,000',
     placeholder:'Your name',
-    tg_lbl:'Add my name via Telegram — 1 ⭐ (first 100)',
+    tg_lbl:'Add my name via Telegram — Free (first 1000)',
     note:'Name + message + your avatar · stays forever',
     wall_lbl:'All names',search_ph:'Search name...',
     tab_wall:'🌍 The Wall',tab_board:'🏆 Leaderboard',
@@ -265,15 +310,25 @@ const T={
     pt5:'Level Up your avatar (150 ⭐, grows each time)',pt6:'Claim "King of the Hill" (150 ⭐)',pt7:'10 friends milestone bonus',
     toast_empty:'Enter your name first',
     toast_added:'Opening Telegram bot...',
-    footer:'Wall of a Million Names · 2025 · Forever'
+    footer:'Wall of a Million Names · 2026 · Forever',
+    joined:'Already joined:',
+    last_name:'Latest name',
+    just_now:'just now',
+    min_ago:'{n} min ago',
+    hr_ago:'{n} hr ago',
+    day_ago:'{n} days ago',
+    motivation_few:'Right now you can join for free. First 1000 spots — no payment needed.',
+    motivation_many:'Join {n} people who already claimed their spot.',
+    recent_title:'Recently joined',
+    early:'There are very few names on the wall yet. You can be among the very first.',
   },
   ru:{
-    badge:'Онлайн · {n} имён',h1:'Одно имя.<br><em>Навсегда.</em>',
-    sub:'Твоё имя, послание и аватарка — на стене навсегда. Первые 100 мест: 1 ⭐ (потом 150 ⭐)',
+    badge:'Онлайн · {n} имён',h1:'Стань одним из первых.<br><em>Навсегда.</em>',
+    sub:'Твоё имя, послание и аватарка — на стене навсегда. Первые 1000 мест — бесплатно!',
     lbl_names:'имён',lbl_raised:'собрано',lbl_left:'осталось',
     pct:'% заполнено',goal:'цель: 1 000 000',
     placeholder:'Твоё имя',
-    tg_lbl:'Добавить имя в Telegram — 1 ⭐ (первые 100)',
+    tg_lbl:'Добавить имя в Telegram — Бесплатно (первые 1000)',
     note:'Имя + послание + аватарка · навсегда',
     wall_lbl:'Все имена',search_ph:'Найти имя...',
     tab_wall:'🌍 Стена',tab_board:'🏆 Рейтинг',
@@ -287,7 +342,17 @@ const T={
     pt5:'Повысить уровень аватара (150 ⭐, растёт каждый раз)',pt6:'Стать "Царём Горы" (150 ⭐)',pt7:'Бонус за 10 друзей',
     toast_empty:'Сначала введи имя',
     toast_added:'Открываем Telegram бота...',
-    footer:'Стена миллиона имён · 2025 · Навсегда'
+    footer:'Стена миллиона имён · 2026 · Навсегда',
+    joined:'Уже присоединились:',
+    last_name:'Последнее имя',
+    just_now:'только что',
+    min_ago:'{n} мин назад',
+    hr_ago:'{n} ч назад',
+    day_ago:'{n} дн назад',
+    motivation_few:'Сейчас ты можешь присоединиться бесплатно. Первые 1000 мест — без оплаты.',
+    motivation_many:'Присоединись к {n} людям, которые уже оставили своё имя.',
+    recent_title:'Недавно присоединились',
+    early:'На стене пока очень мало имён. Ты можешь быть среди самых первых.',
   }
 };
 
@@ -334,6 +399,7 @@ function setLang(l){
   document.getElementById('pt6').textContent=t.pt6;
   document.getElementById('pt7').textContent=t.pt7;
   document.getElementById('footer-txt').textContent=t.footer;
+  updateAllNewBlocks();
 }
 
 function showTab(tab){
@@ -433,6 +499,71 @@ wall.innerHTML = '<div class="wall-loading">Loading the wall…</div>';
 const SUPABASE_URL = 'https://xurgwsxaglsapmogtapk.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_3LlsX3-vd-YwCmhko1oIxA_PSjFmYtD';
 
+// Хранилище последних имён для недавних участников
+let recentNames = [];
+let lastNameData = null;
+
+function timeAgo(dateStr) {
+  const t = T[lang];
+  const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+  if (diff < 60) return t.just_now;
+  if (diff < 3600) return t.min_ago.replace('{n}', Math.floor(diff/60));
+  if (diff < 86400) return t.hr_ago.replace('{n}', Math.floor(diff/3600));
+  return t.day_ago.replace('{n}', Math.floor(diff/86400));
+}
+
+function updateJoinedCounter() {
+  const t = T[lang];
+  document.getElementById('joined-label').textContent = t.joined;
+  document.getElementById('joined-count').textContent = total > 0 ? total.toLocaleString() : '···';
+}
+
+function updateLastName() {
+  if (!lastNameData) return;
+  const t = T[lang];
+  const block = document.getElementById('last-name-block');
+  document.getElementById('last-name-label').textContent = t.last_name;
+  document.getElementById('last-name-value').textContent = lastNameData.name;
+  document.getElementById('last-name-msg').textContent = lastNameData.message ? `"${lastNameData.message}"` : '';
+  document.getElementById('last-name-time').textContent = lastNameData.created_at ? timeAgo(lastNameData.created_at) : t.just_now;
+  block.style.display = 'block';
+}
+
+function updateMotivation() {
+  const t = T[lang];
+  const block = document.getElementById('motivation-block');
+  if (total === 0) { block.textContent = ''; return; }
+  if (total < 100) {
+    block.textContent = t.motivation_few;
+  } else {
+    block.textContent = t.motivation_many.replace('{n}', total.toLocaleString());
+  }
+}
+
+function updateRecentBlock() {
+  const t = T[lang];
+  const block = document.getElementById('recent-block');
+  if (recentNames.length < 2) { block.style.display = 'none'; return; }
+  document.getElementById('recent-title').textContent = t.recent_title;
+  const list = document.getElementById('recent-list');
+  list.innerHTML = '';
+  recentNames.slice(0, 5).forEach(r => {
+    const color = getColor(r.name);
+    const item = document.createElement('div');
+    item.className = 'recent-item';
+    item.innerHTML = `<div class="recent-av" style="background:${color}22;color:${color}">${getInitial(r.name)}</div><span class="recent-name">${r.name}</span>`;
+    list.appendChild(item);
+  });
+  block.style.display = 'block';
+}
+
+function updateAllNewBlocks() {
+  updateJoinedCounter();
+  updateLastName();
+  updateMotivation();
+  updateRecentBlock();
+}
+
 function renderDemoWall(){
   wall.innerHTML = '<div class="wall-loading" style="padding:48px 0;font-size:15px">Be the first to add your name 🚀</div>';
   total = 0;
@@ -442,25 +573,25 @@ function renderDemoWall(){
 async function loadRealNames() {
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/names?select=name,message,id,avatar_url,points,is_vip&order=id.desc`,
+      `${SUPABASE_URL}/rest/v1/names?select=name,message,id,avatar_url,points,is_vip,created_at&order=id.desc`,
       { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
     );
     if (!res.ok) { renderDemoWall(); return; }
     const rows = await res.json();
     if (!rows.length) { renderDemoWall(); return; }
 
-    // Удаляем seed-заглушки и ставим реальные данные (новые сверху — порядок совпадает с live-обновлением)
     wall.innerHTML = '';
     rows.forEach(r => {
       const person = { name: r.name, msg: r.message || '', pts: r.points || 0, rank: null, number: r.id, avatar: r.avatar_url, isVip: r.is_vip || false };
       wall.appendChild(createAvatar(person, false));
     });
 
-    // Обновляем счётчик: total — для отображения количества участников,
-    // nameCounter — максимальный id (rows[0], т.к. порядок desc) для проверки новых имён при polling
     total = rows.length;
     nameCounter = rows[0].id;
+    lastNameData = rows[0];
+    recentNames = rows.slice(0, 5);
     updateStats();
+    updateAllNewBlocks();
   } catch(e) {
     console.log('Supabase unreachable, falling back to demo wall');
     renderDemoWall();
@@ -472,7 +603,7 @@ async function subscribeRealtime() {
   setInterval(async () => {
     try {
       const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/names?select=name,message,id,avatar_url,points,is_vip&order=id.desc&limit=1`,
+        `${SUPABASE_URL}/rest/v1/names?select=name,message,id,avatar_url,points,is_vip,created_at&order=id.desc&limit=1`,
         { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
       );
       if (!res.ok) return;
@@ -480,12 +611,14 @@ async function subscribeRealtime() {
       if (!rows.length) return;
       const latest = rows[0];
       if (latest.id > nameCounter) {
-        // Новое имя появилось — добавляем в начало стены
         const person = { name: latest.name, msg: latest.message || '', pts: latest.points || 0, rank: null, number: latest.id, avatar: latest.avatar_url, isVip: latest.is_vip || false };
         wall.insertBefore(createAvatar(person, true), wall.firstChild);
-        total = latest.id;
+        total++;
         nameCounter = latest.id;
+        lastNameData = latest;
+        recentNames = [latest, ...recentNames].slice(0, 5);
         updateStats();
+        updateAllNewBlocks();
       }
     } catch(e) {}
   }, 10000);
