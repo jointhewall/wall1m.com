@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQ65Z7ET18"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-ZQ65Z7ET18');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wall of a Million Names</title>
@@ -662,6 +670,9 @@ function handlePay(){
   const name=input.value.trim();
   if(!name){showToast(T[lang].toast_empty);input.focus();return}
 
+  // Аналитика: клик по кнопке "Add my name via Telegram"
+  if(typeof gtag === 'function') gtag('event', 'cta_click', { name_length: name.length });
+
   total++;
   const person={name,msg:'',pts:0,rank:null,number:total};
   const card=createAvatar(person,true);
@@ -675,6 +686,15 @@ function handlePay(){
 }
 
 document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')handlePay()});
+
+// Аналитика: фокус на поле имени = дошёл до "барьера ввода текста"
+let nameInputTracked = false;
+document.getElementById('nameInput').addEventListener('focus', function(){
+  if(!nameInputTracked){
+    nameInputTracked = true;
+    if(typeof gtag === 'function') gtag('event', 'name_input_focus');
+  }
+});
 
 document.getElementById('searchInput').addEventListener('input',function(){
   const q=this.value.toLowerCase().trim();
