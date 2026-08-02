@@ -115,12 +115,14 @@ h1 em{color:var(--accent);font-style:normal}
 .motivation-block{text-align:center;padding:16px 24px;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;max-width:520px;margin:0 auto 8px}
 
 /* Недавние участники */
-.recent-block{margin:0 auto 20px;max-width:520px;padding:0 24px}
-.recent-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px}
-.recent-list{display:flex;gap:10px;flex-wrap:wrap}
-.recent-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:5px 12px 5px 5px}
-.recent-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.recent-name{font-size:13px;color:var(--text)}
+.recent-block{margin:0 auto 20px;max-width:720px;padding:0 24px;text-align:center}
+.recent-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;text-align:center}
+.recent-list{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.recent-item{display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(8,8,20,0.92);border:1.5px solid rgba(200,241,53,0.25);border-radius:14px;padding:16px 18px;min-width:150px;max-width:210px;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.recent-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.recent-name{font-size:14px;font-weight:700;color:var(--text)}
+.recent-msg{font-size:12px;color:var(--muted);font-style:italic;line-height:1.35}
+.recent-time{font-size:10px;color:rgba(255,255,255,0.32);margin-top:2px}
 
 /* TOOLTIP */
 .tooltip{position:absolute;bottom:58px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:1000;min-width:120px;text-align:center}
@@ -130,8 +132,13 @@ h1 em{color:var(--accent);font-style:normal}
 .tooltip-name{font-weight:600;color:var(--accent);margin-bottom:3px}
 .tooltip-msg{color:var(--muted);font-size:11px;line-height:1.4;max-width:160px;white-space:normal}
 .tooltip-num{font-size:10px;color:var(--muted);margin-top:4px}
-.ghost-av{border:2px dashed rgba(255,255,255,0.22)!important;background:rgba(255,255,255,0.03)!important;color:rgba(255,255,255,0.28)!important;transition:all 0.2s}
-.ghost-card:hover .ghost-av{border-color:var(--accent);border-style:solid;background:rgba(200,241,53,0.1)!important;color:var(--accent)!important;transform:scale(1.08)}
+.ghost-av{border:1.5px solid rgba(200,241,53,0.18)!important;background:radial-gradient(circle,rgba(200,241,53,0.06),rgba(255,255,255,0.02))!important;color:rgba(200,241,53,0.35)!important;transition:all 0.25s;animation:ghostPulse 3.2s ease-in-out infinite}
+.ghost-av.ghost-delay-1{animation-delay:0.6s}
+.ghost-av.ghost-delay-2{animation-delay:1.2s}
+.ghost-av.ghost-delay-3{animation-delay:1.8s}
+.ghost-av.ghost-delay-4{animation-delay:2.4s}
+@keyframes ghostPulse{0%,100%{box-shadow:0 0 0 rgba(200,241,53,0)}50%{box-shadow:0 0 12px rgba(200,241,53,0.18)}}
+.ghost-card:hover .ghost-av{border-color:var(--accent);border-width:2px;background:rgba(200,241,53,0.14)!important;color:var(--accent)!important;transform:scale(1.1);animation:none;box-shadow:0 0 16px rgba(200,241,53,0.35)}
 .ghost-card .tooltip{cursor:pointer}
 .tooltip-cta{color:var(--accent);font-size:11px;font-weight:600;margin-top:4px}
 
@@ -434,7 +441,8 @@ function createGhostBrick(){
   card.className='avatar-card ghost-card';
 
   const av=document.createElement('div');
-  av.className='avatar ghost-av';
+  const delayClass='ghost-delay-'+Math.floor(Math.random()*5);
+  av.className='avatar ghost-av '+delayClass;
   av.textContent='+';
   card.appendChild(av);
 
@@ -620,11 +628,13 @@ function updateRecentBlock() {
   document.getElementById('recent-title').textContent = t.recent_title;
   const list = document.getElementById('recent-list');
   list.innerHTML = '';
-  recentNames.slice(0, 5).forEach(r => {
+  recentNames.slice(0, 3).forEach(r => {
     const color = getColor(r.name);
     const item = document.createElement('div');
     item.className = 'recent-item';
-    item.innerHTML = `<div class="recent-av" style="background:${color}22;color:${color}">${getInitial(r.name)}</div><span class="recent-name">${r.name}</span>`;
+    const msgHtml = r.message ? `<div class="recent-msg">"${r.message}"</div>` : '';
+    const timeHtml = r.created_at ? `<div class="recent-time">${timeAgo(r.created_at)}</div>` : '';
+    item.innerHTML = `<div class="recent-av" style="background:${color}22;color:${color}">${getInitial(r.name)}</div><span class="recent-name">${r.name}</span>${msgHtml}${timeHtml}`;
     list.appendChild(item);
   });
   block.style.display = 'block';
@@ -662,7 +672,7 @@ async function loadRealNames() {
     total = rows.length;
     nameCounter = rows[0].id;
     lastNameData = rows[0];
-    recentNames = rows.slice(0, 5);
+    recentNames = rows.slice(0, 3);
     addGhostBricks(total);
     updateStats();
     updateAllNewBlocks();
@@ -690,7 +700,7 @@ async function subscribeRealtime() {
         total++;
         nameCounter = latest.id;
         lastNameData = latest;
-        recentNames = [latest, ...recentNames].slice(0, 5);
+        recentNames = [latest, ...recentNames].slice(0, 3);
         updateStats();
         updateAllNewBlocks();
       }
