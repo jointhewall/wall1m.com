@@ -78,6 +78,12 @@ h1 em{color:var(--accent);font-style:normal}
 .btn-pay:hover{opacity:0.85}
 .btn-tg{background:var(--tg);color:#fff;grid-column:1/-1}
 .pay-note{font-size:11px;color:var(--muted);text-align:center}
+.how-it-works{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:22px auto 0;max-width:640px;padding:14px 18px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px}
+.hiw-step{display:flex;align-items:center;gap:8px}
+.hiw-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#0a0a0a;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hiw-text{font-size:12.5px;color:var(--muted)}
+.hiw-arrow{color:rgba(255,255,255,0.2);font-size:14px}
+@media(max-width:640px){.how-it-works{flex-direction:column;align-items:flex-start;gap:10px}.hiw-arrow{display:none}}
 
 /* WALL OF AVATARS */
 .wall-section{padding:36px 24px 60px}
@@ -132,13 +138,13 @@ h1 em{color:var(--accent);font-style:normal}
 .tooltip-name{font-weight:600;color:var(--accent);margin-bottom:3px}
 .tooltip-msg{color:var(--muted);font-size:11px;line-height:1.4;max-width:160px;white-space:normal}
 .tooltip-num{font-size:10px;color:var(--muted);margin-top:4px}
-.ghost-av{border:1.5px solid rgba(200,241,53,0.18)!important;background:radial-gradient(circle,rgba(200,241,53,0.06),rgba(255,255,255,0.02))!important;color:rgba(200,241,53,0.35)!important;transition:all 0.25s;animation:ghostPulse 3.2s ease-in-out infinite}
+.ghost-av{border:2px solid transparent!important;background:rgba(180,185,195,0.14)!important;color:rgba(210,215,225,0.55)!important;transition:all 0.25s;animation:ghostPulse 3.2s ease-in-out infinite}
 .ghost-av.ghost-delay-1{animation-delay:0.6s}
 .ghost-av.ghost-delay-2{animation-delay:1.2s}
 .ghost-av.ghost-delay-3{animation-delay:1.8s}
 .ghost-av.ghost-delay-4{animation-delay:2.4s}
-@keyframes ghostPulse{0%,100%{box-shadow:0 0 0 rgba(200,241,53,0)}50%{box-shadow:0 0 12px rgba(200,241,53,0.18)}}
-.ghost-card:hover .ghost-av{border-color:var(--accent);border-width:2px;background:rgba(200,241,53,0.14)!important;color:var(--accent)!important;transform:scale(1.1);animation:none;box-shadow:0 0 16px rgba(200,241,53,0.35)}
+@keyframes ghostPulse{0%,100%{box-shadow:0 0 0 rgba(200,241,53,0)}50%{box-shadow:0 0 10px rgba(200,241,53,0.14)}}
+.ghost-card:hover .ghost-av{border-color:var(--accent);background:rgba(200,241,53,0.16)!important;color:var(--accent)!important;transform:scale(1.1);animation:none;box-shadow:0 0 16px rgba(200,241,53,0.35)}
 .ghost-card .tooltip{cursor:pointer}
 .tooltip-cta{color:var(--accent);font-size:11px;font-weight:600;margin-top:4px}
 
@@ -258,6 +264,23 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
       <button class="btn-pay btn-tg" onclick="handlePay()">✈️ <span id="tg-lbl">Add my name via Telegram — Free (first 1000)</span></button>
     </div>
     <p class="pay-note" id="note">Name + message + your avatar · stays forever</p>
+
+    <div class="how-it-works" id="how-it-works">
+      <div class="hiw-step">
+        <span class="hiw-num">1</span>
+        <span class="hiw-text" id="hiw-1">Type your name above</span>
+      </div>
+      <div class="hiw-arrow">→</div>
+      <div class="hiw-step">
+        <span class="hiw-num">2</span>
+        <span class="hiw-text" id="hiw-2">Tap the button — Telegram opens</span>
+      </div>
+      <div class="hiw-arrow">→</div>
+      <div class="hiw-step">
+        <span class="hiw-num">3</span>
+        <span class="hiw-text" id="hiw-3">Confirm in the bot — get your certificate</span>
+      </div>
+    </div>
   </section>
 
   <div class="wall-section">
@@ -342,6 +365,9 @@ const T={
     early:'There are very few names on the wall yet. You can be among the very first.',
     ghost_tip:'This spot is free',
     ghost_cta:'Tap to claim it →',
+    hiw1:'Type your name above',
+    hiw2:'Tap the button — Telegram opens',
+    hiw3:'Confirm in the bot — get your certificate',
   },
   ru:{
     badge:'Онлайн · {n} имён',h1:'Стань одним из первых.<br><em>Навсегда.</em>',
@@ -376,6 +402,9 @@ const T={
     early:'На стене пока очень мало имён. Ты можешь быть среди самых первых.',
     ghost_tip:'Это место свободно',
     ghost_cta:'Нажми, чтобы занять →',
+    hiw1:'Введи имя выше',
+    hiw2:'Нажми кнопку — откроется Telegram',
+    hiw3:'Подтверди в боте — получи сертификат',
   }
 };
 
@@ -405,6 +434,9 @@ function setLang(l){
   document.getElementById('nameInput').placeholder=t.placeholder;
   document.getElementById('tg-lbl').textContent=t.tg_lbl;
   document.getElementById('note').textContent=t.note;
+  document.getElementById('hiw-1').textContent=t.hiw1;
+  document.getElementById('hiw-2').textContent=t.hiw2;
+  document.getElementById('hiw-3').textContent=t.hiw3;
   document.getElementById('wall-lbl').textContent=t.wall_lbl;
   document.getElementById('searchInput').placeholder=t.search_ph;
   document.getElementById('tab-wall').textContent=t.tab_wall;
@@ -496,7 +528,6 @@ function createAvatar(person, isNew){
   av.className='avatar'+(isGold?' gold-av':'')+(person.isVip?' vip-av':'')+(isNew?' new-av':'');
   av.style.background=color+'22';
   av.style.color=color;
-  av.textContent=initial;
 
   const tip=document.createElement('div');
   tip.className='tooltip';
@@ -741,6 +772,29 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 
+// Telegram start-параметр разрешает только A-Z a-z 0-9 _ - и максимум 64 символа.
+// Кодируем имя в base64url (UTF-8-safe), чтобы кириллица и пробелы не сломали ссылку.
+function utf8ToBase64Url(str){
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  const base64 = btoa(binary);
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function buildBotDeepLink(name, clientId){
+  // Ограничиваем длину имени, чтобы после base64-кодирования
+  // весь start-параметр гарантированно уместился в лимит 64 символа Telegram
+  const shortName = name.slice(0, 12);
+  const nameEncoded = utf8ToBase64Url(shortName);
+
+  if (clientId) {
+    const clientPart = clientId.replace(/\./g, '_'); // точка не разрешена Telegram
+    return `https://t.me/wall1mnames_bot?start=ga_${clientPart}-${nameEncoded}`;
+  }
+  return `https://t.me/wall1mnames_bot?start=n-${nameEncoded}`;
+}
+
 function handlePay(){
   const input=document.getElementById('nameInput');
   const name=input.value.trim();
@@ -762,13 +816,11 @@ function handlePay(){
   const botWindow = window.open('', '_blank');
   if(typeof gtag === 'function'){
     gtag('get', 'G-ZQ65Z7ET18', 'client_id', function(clientId){
-      const url = clientId
-        ? `https://t.me/wall1mnames_bot?start=ga_${clientId}`
-        : 'https://t.me/wall1mnames_bot';
+      const url = buildBotDeepLink(name, clientId);
       if(botWindow) botWindow.location.href = url;
     });
   } else if(botWindow) {
-    botWindow.location.href = 'https://t.me/wall1mnames_bot';
+    botWindow.location.href = buildBotDeepLink(name, null);
   }
   input.value='';
 }
