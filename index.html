@@ -130,6 +130,10 @@ h1 em{color:var(--accent);font-style:normal}
 .tooltip-name{font-weight:600;color:var(--accent);margin-bottom:3px}
 .tooltip-msg{color:var(--muted);font-size:11px;line-height:1.4;max-width:160px;white-space:normal}
 .tooltip-num{font-size:10px;color:var(--muted);margin-top:4px}
+.ghost-av{border:2px dashed rgba(255,255,255,0.22)!important;background:rgba(255,255,255,0.03)!important;color:rgba(255,255,255,0.28)!important;transition:all 0.2s}
+.ghost-card:hover .ghost-av{border-color:var(--accent);border-style:solid;background:rgba(200,241,53,0.1)!important;color:var(--accent)!important;transform:scale(1.08)}
+.ghost-card .tooltip{cursor:pointer}
+.tooltip-cta{color:var(--accent);font-size:11px;font-weight:600;margin-top:4px}
 
 /* LEADERBOARD */
 .leaderboard{max-width:680px;margin:0 auto;padding:40px 24px 60px}
@@ -329,6 +333,8 @@ const T={
     motivation_many:'Join {n} people who already claimed their spot.',
     recent_title:'Recently joined',
     early:'There are very few names on the wall yet. You can be among the very first.',
+    ghost_tip:'This spot is free',
+    ghost_cta:'Tap to claim it →',
   },
   ru:{
     badge:'Онлайн · {n} имён',h1:'Стань одним из первых.<br><em>Навсегда.</em>',
@@ -361,6 +367,8 @@ const T={
     motivation_many:'Присоединись к {n} людям, которые уже оставили своё имя.',
     recent_title:'Недавно присоединились',
     early:'На стене пока очень мало имён. Ты можешь быть среди самых первых.',
+    ghost_tip:'Это место свободно',
+    ghost_cta:'Нажми, чтобы занять →',
   }
 };
 
@@ -407,6 +415,7 @@ function setLang(l){
   document.getElementById('pt6').textContent=t.pt6;
   document.getElementById('pt7').textContent=t.pt7;
   document.getElementById('footer-txt').textContent=t.footer;
+  refreshGhostTooltips();
   updateAllNewBlocks();
 }
 
@@ -419,6 +428,52 @@ function showTab(tab){
 
 
 const wall=document.getElementById('wall');
+
+function createGhostBrick(){
+  const card=document.createElement('div');
+  card.className='avatar-card ghost-card';
+
+  const av=document.createElement('div');
+  av.className='avatar ghost-av';
+  av.textContent='+';
+  card.appendChild(av);
+
+  const tip=document.createElement('div');
+  tip.className='tooltip';
+  const tipName=document.createElement('div');
+  tipName.className='tooltip-name ghost-tip-name';
+  tipName.textContent=T[lang].ghost_tip;
+  tip.appendChild(tipName);
+  const tipCta=document.createElement('div');
+  tipCta.className='tooltip-cta ghost-tip-cta';
+  tipCta.textContent=T[lang].ghost_cta;
+  tip.appendChild(tipCta);
+  card.appendChild(tip);
+
+  card.addEventListener('click', ()=>{
+    const input=document.getElementById('nameInput');
+    input.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(()=>input.focus(), 300);
+  });
+
+  return card;
+}
+
+// Заполняет стену "пустыми" кирпичами до минимального визуального объёма,
+// чтобы стена не выглядела заброшенной, пока реальных имён ещё мало.
+// При наведении честно показывает, что место свободно, и предлагает его занять.
+const MIN_WALL_SIZE = 60;
+function addGhostBricks(realCount){
+  const ghostsNeeded = Math.max(0, MIN_WALL_SIZE - realCount);
+  for(let i=0;i<ghostsNeeded;i++){
+    wall.appendChild(createGhostBrick());
+  }
+}
+
+function refreshGhostTooltips(){
+  document.querySelectorAll('.ghost-tip-name').forEach(el=>el.textContent=T[lang].ghost_tip);
+  document.querySelectorAll('.ghost-tip-cta').forEach(el=>el.textContent=T[lang].ghost_cta);
+}
 
 function createAvatar(person, isNew){
   const card=document.createElement('div');
@@ -522,6 +577,16 @@ function timeAgo(dateStr) {
 
 function updateJoinedCounter() {
   const t = T[lang];
+  const counterEl = document.getElementById('joined-counter');
+
+  // Пока людей мало, точное число выглядит невзрачно — прячем счётчик
+  // и показываем его только когда наберётся 100+ участников
+  if (total > 0 && total < 100) {
+    counterEl.style.display = 'none';
+    return;
+  }
+
+  counterEl.style.display = '';
   document.getElementById('joined-label').textContent = t.joined;
   document.getElementById('joined-count').textContent = total > 0 ? total.toLocaleString() : '···';
 }
@@ -598,6 +663,7 @@ async function loadRealNames() {
     nameCounter = rows[0].id;
     lastNameData = rows[0];
     recentNames = rows.slice(0, 5);
+    addGhostBricks(total);
     updateStats();
     updateAllNewBlocks();
   } catch(e) {
@@ -680,8 +746,20 @@ function handlePay(){
   updateStats();
   showToast(T[lang].toast_added);
 
-  // Открыть бота
-  window.open('https://t.me/wall1mnames_bot','_blank');
+  // Открыть бота с передачей GA client_id для сквозной аналитики (сайт → бот → стена)
+  // Окно открываем сразу синхронно (чтобы браузер не заблокировал попап),
+  // а адрес подставляем как только получим client_id
+  const botWindow = window.open('', '_blank');
+  if(typeof gtag === 'function'){
+    gtag('get', 'G-ZQ65Z7ET18', 'client_id', function(clientId){
+      const url = clientId
+        ? `https://t.me/wall1mnames_bot?start=ga_${clientId}`
+        : 'https://t.me/wall1mnames_bot';
+      if(botWindow) botWindow.location.href = url;
+    });
+  } else if(botWindow) {
+    botWindow.location.href = 'https://t.me/wall1mnames_bot';
+  }
   input.value='';
 }
 
