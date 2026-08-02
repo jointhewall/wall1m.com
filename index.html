@@ -528,6 +528,7 @@ function createAvatar(person, isNew){
   av.className='avatar'+(isGold?' gold-av':'')+(person.isVip?' vip-av':'')+(isNew?' new-av':'');
   av.style.background=color+'22';
   av.style.color=color;
+  av.textContent=initial;
 
   const tip=document.createElement('div');
   tip.className='tooltip';
