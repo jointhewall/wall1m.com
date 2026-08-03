@@ -33,7 +33,7 @@
   --bronze:#CD7F32;
 }
 
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Crect x='1' y='1' width='37' height='17' rx='2' fill='none' stroke='%23ffffff' stroke-width='0.8' opacity='0.22'/%3E%3Crect x='41' y='1' width='37' height='17' rx='2' fill='none' stroke='%23ffffff' stroke-width='0.8' opacity='0.22'/%3E%3Crect x='-19' y='21' width='37' height='17' rx='2' fill='none' stroke='%23ffffff' stroke-width='0.8' opacity='0.22'/%3E%3Crect x='21' y='21' width='37' height='17' rx='2' fill='none' stroke='%23ffffff' stroke-width='0.8' opacity='0.22'/%3E%3Crect x='61' y='21' width='37' height='17' rx='2' fill='none' stroke='%23ffffff' stroke-width='0.8' opacity='0.22'/%3E%3C/svg%3E");background-repeat:repeat;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Crect x='1' y='1' width='37' height='17' rx='2' fill='none' stroke='%23ffffff' stroke-width='0.9' opacity='0.32'/%3E%3Crect x='41' y='1' width='37' height='17' rx='2' fill='none' stroke='%23ffffff' stroke-width='0.9' opacity='0.32'/%3E%3Crect x='-19' y='21' width='37' height='17' rx='2' fill='none' stroke='%23ffffff' stroke-width='0.9' opacity='0.32'/%3E%3Crect x='21' y='21' width='37' height='17' rx='2' fill='none' stroke='%23ffffff' stroke-width='0.9' opacity='0.32'/%3E%3Crect x='61' y='21' width='37' height='17' rx='2' fill='none' stroke='%23ffffff' stroke-width='0.9' opacity='0.32'/%3E%3C/svg%3E");background-repeat:repeat;}
 
 nav{display:flex;justify-content:space-between;align-items:center;padding:18px 28px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(8,8,16,0.92);backdrop-filter:blur(16px);z-index:100}
 .nav-logo{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.02em}
@@ -48,7 +48,16 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:18px 2
 
 .panel{display:none}.panel.active{display:block}
 
-.hero{max-width:1000px;margin:0 auto;padding:72px 24px 56px;text-align:center}
+.hero{max-width:1250px;margin:0 auto;padding:72px 24px 56px;text-align:center}
+
+.side-rail{position:fixed;top:0;height:100vh;width:220px;display:none;flex-direction:column;justify-content:center;gap:22px;padding:24px;pointer-events:none;z-index:1}
+.side-rail-left{left:0}
+.side-rail-right{right:0}
+.side-msg{background:rgba(255,255,255,0.025);border:1px solid rgba(200,241,53,0.1);border-radius:12px;padding:12px 14px;opacity:0.55;transform:scale(0.96);transition:opacity 0.4s,transform 0.4s}
+.side-msg:hover{opacity:0.9;transform:scale(1)}
+.side-msg-name{font-size:11px;font-weight:700;color:rgba(200,241,53,0.7);margin-bottom:4px}
+.side-msg-text{font-size:11.5px;color:rgba(255,255,255,0.45);font-style:italic;line-height:1.4}
+@media(min-width:1500px){.side-rail{display:flex}}
 .badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(200,241,53,0.2);border-radius:20px;padding:6px 18px;margin-bottom:32px}
 .pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
@@ -106,13 +115,14 @@ h1 em{color:var(--accent);font-style:normal}
 
 /* AVATAR CARDS */
 .avatar-card{position:relative;cursor:pointer}
-.avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif;border:2px solid transparent;transition:all 0.15s;user-select:none}
+.avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif;border:2px solid transparent;transition:all 0.15s;user-select:none;box-shadow:0 0 10px rgba(255,255,255,0.05)}
 .avatar:hover{transform:scale(1.15);border-color:var(--accent)}
 .avatar.gold-av{border-color:var(--gold)}
 .wall-loading{width:100%;text-align:center;padding:32px 0;color:var(--muted);font-size:14px;opacity:0.7}
 .avatar.vip-av{box-shadow:0 0 0 2px var(--gold),0 0 12px rgba(255,215,0,0.5);position:relative}
 .avatar.vip-av::after{content:'👑';position:absolute;top:-10px;right:-6px;font-size:14px}
-.avatar.new-av{animation:popIn 0.4s ease;border-color:var(--accent)}
+.avatar.new-av{animation:popIn 0.4s ease,newGlow 3s ease-out;border-color:var(--accent)}
+@keyframes newGlow{0%{box-shadow:0 0 24px rgba(200,241,53,0.8)}100%{box-shadow:0 0 10px rgba(255,255,255,0.05)}}
 @keyframes popIn{0%{transform:scale(0);opacity:0}60%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
 
 /* Счётчик участников */
@@ -120,15 +130,15 @@ h1 em{color:var(--accent);font-style:normal}
 .joined-counter strong{color:var(--accent);font-size:22px;font-weight:800;text-shadow:0 0 20px rgba(200,241,53,0.4)}
 
 /* Последнее имя */
-.last-name-block{background:rgba(8,8,20,0.95);border:1.5px solid rgba(200,241,53,0.4);border-radius:14px;padding:20px 28px;margin:18px auto;max-width:440px;text-align:center;box-shadow:0 0 0 1px rgba(200,241,53,0.1),0 8px 32px rgba(0,0,0,0.6)}
-.last-name-label{font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
-.last-name-value{font-size:19px;font-weight:700;color:#ffffff}
-.last-name-msg{font-size:13px;color:var(--muted);margin-top:3px;font-style:italic}
-.last-name-time{font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px}
-.lnb-sublabel{font-size:9.5px;color:rgba(200,241,53,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:8px 0 3px}
-.lnb-translation{margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.1)}
-.lnb-sublabel-tr{color:rgba(255,255,255,0.35)}
-.lnb-tr-text{color:rgba(255,255,255,0.55)}
+.last-name-block{background:rgba(8,8,20,0.95);border:2px solid rgba(200,241,53,0.45);border-radius:20px;padding:32px 40px;margin:26px auto;max-width:560px;text-align:center;box-shadow:0 0 0 1px rgba(200,241,53,0.12),0 16px 48px rgba(0,0,0,0.65),0 0 40px rgba(200,241,53,0.08)}
+.last-name-label{font-size:12.5px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;font-weight:700}
+.last-name-value{font-size:28px;font-weight:800;color:#ffffff}
+.last-name-msg{font-size:17px;color:var(--muted);margin-top:8px;font-style:italic;line-height:1.45}
+.last-name-time{font-size:12px;color:rgba(255,255,255,0.35);margin-top:10px}
+.lnb-sublabel{font-size:11px;color:rgba(200,241,53,0.65);text-transform:uppercase;letter-spacing:0.12em;margin:14px 0 5px;font-weight:700}
+.lnb-translation{margin-top:14px;padding-top:14px;border-top:1px dashed rgba(255,255,255,0.12)}
+.lnb-sublabel-tr{color:rgba(255,255,255,0.4)}
+.lnb-tr-text{color:rgba(255,255,255,0.6);font-size:16px}
 
 /* Мотивация */
 .motivation-block{text-align:center;padding:16px 24px;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;max-width:520px;margin:0 auto 8px}
@@ -204,6 +214,11 @@ h1 em{color:var(--accent);font-style:normal}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;border:1px solid var(--border2);border-radius:12px;padding:12px 20px;font-size:13px;color:var(--text);transition:transform 0.3s ease;z-index:999;white-space:nowrap;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
+.live-toast{position:fixed;bottom:24px;left:24px;background:rgba(20,20,32,0.95);border:1px solid rgba(200,241,53,0.25);border-radius:12px;padding:11px 18px;font-size:12.5px;color:rgba(240,240,255,0.85);opacity:0;transform:translateY(12px);transition:opacity 0.4s ease,transform 0.4s ease;z-index:998;pointer-events:none;max-width:260px}
+.live-toast.show{opacity:1;transform:translateY(0)}
+.live-toast b{color:var(--accent)}
+@media(max-width:640px){.live-toast{left:16px;right:16px;bottom:16px;max-width:none}}
+
 footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-size:12px;color:var(--muted)}
 
 @media(max-width:520px){
@@ -238,6 +253,8 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
 
 <!-- WALL PANEL -->
 <div class="panel active" id="panel-wall">
+  <div class="side-rail side-rail-left" id="side-rail-left"></div>
+  <div class="side-rail side-rail-right" id="side-rail-right"></div>
   <section class="hero">
     <div id="badge-block" style="display:none"><div class="badge"><span class="pulse"></span><span id="badge-txt">Live · ··· names</span></div></div>
     <h1 id="h1">One name. One message.<br><em>Forever.</em></h1>
@@ -362,6 +379,7 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
 
 <footer id="footer-txt">Wall of a Million Names · 2026 · Forever</footer>
 <div class="toast" id="toast"></div>
+<div class="live-toast" id="live-toast"></div>
 
 <script>
 const T={
@@ -409,6 +427,8 @@ const T={
     why1:'To leave a memory',
     why2:'To be part of something global',
     why3:'To stay on the Wall forever',
+    live_joined_ago:'{name} joined the Wall · {time}',
+    live_joined_now:'{name} just joined!',
   },
   ru:{
     badge:'Онлайн · {n} имён',h1:'Одно имя. Одно послание.<br><em>Навсегда.</em>',
@@ -454,6 +474,8 @@ const T={
     why1:'Чтобы оставить память',
     why2:'Чтобы стать частью мирового проекта',
     why3:'Чтобы навсегда остаться на Стене',
+    live_joined_ago:'{name} присоединился к Стене · {time}',
+    live_joined_now:'{name} только что присоединился!',
   }
 };
 
@@ -773,6 +795,27 @@ function updateAllNewBlocks() {
   updateRecentBlock();
 }
 
+// Заполняет боковые "рельсы" настоящими сообщениями — на широких экранах
+// это превращает пустое пространство слева/справа в часть самой стены,
+// а не просто декор
+function updateSideRails(rows) {
+  const withMsg = rows.filter(r => r.message && r.message.trim());
+  const pool = withMsg.length ? withMsg : rows;
+  if (!pool.length) return;
+
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const left = shuffled.slice(0, 3);
+  const right = shuffled.slice(3, 6).length ? shuffled.slice(3, 6) : shuffled.slice(0, 3);
+
+  const render = (arr) => arr.map(r => {
+    const msgText = r.message ? `"${r.message}"` : '';
+    return `<div class="side-msg"><div class="side-msg-name">${r.name}</div><div class="side-msg-text">${msgText}</div></div>`;
+  }).join('');
+
+  document.getElementById('side-rail-left').innerHTML = render(left);
+  document.getElementById('side-rail-right').innerHTML = render(right);
+}
+
 function renderDemoWall(){
   wall.innerHTML = '<div class="wall-loading" style="padding:48px 0;font-size:15px">Be the first to add your name 🚀</div>';
   total = 0;
@@ -802,6 +845,8 @@ async function loadRealNames() {
     addGhostBricks(total);
     updateStats();
     updateAllNewBlocks();
+    updateSideRails(rows);
+    startLiveTicker(rows);
   } catch(e) {
     console.log('Supabase unreachable, falling back to demo wall');
     renderDemoWall();
@@ -835,8 +880,11 @@ async function subscribeRealtime() {
         nameCounter = latest.id;
         lastNameData = latest;
         recentNames = [latest, ...recentNames].slice(0, 3);
+        allRealRows = [latest, ...allRealRows];
         updateStats();
         updateAllNewBlocks();
+        const template = T[lang].live_joined_now.replace('{name}', `<b>${latest.name}</b>`);
+        showLiveToast(`✨ ${template}`);
       }
     } catch(e) {}
   }, 10000);
@@ -873,6 +921,32 @@ function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+let liveToastTimer=null;
+function showLiveToast(html){
+  const el=document.getElementById('live-toast');
+  el.innerHTML=html;
+  el.classList.add('show');
+  clearTimeout(liveToastTimer);
+  liveToastTimer=setTimeout(()=>el.classList.remove('show'),4500);
+}
+
+// Честная "живость": реальные люди из уже загруженных данных, с настоящим
+// временем регистрации — никогда не выдаём старую запись за "только что"
+let allRealRows=[];
+let liveTickerInterval=null;
+function startLiveTicker(rows){
+  allRealRows=rows;
+  if (liveTickerInterval) clearInterval(liveTickerInterval);
+  if (!rows.length) return;
+  liveTickerInterval=setInterval(()=>{
+    const person=allRealRows[Math.floor(Math.random()*allRealRows.length)];
+    if (!person) return;
+    const time=person.created_at ? timeAgo(person.created_at) : T[lang].just_now;
+    const template=T[lang].live_joined_ago.replace('{name}', `<b>${person.name}</b>`).replace('{time}', time);
+    showLiveToast(`✨ ${template}`);
+  }, 10000 + Math.random()*4000);
 }
 
 // Telegram start-параметр разрешает только A-Z a-z 0-9 _ - и максимум 64 символа.
