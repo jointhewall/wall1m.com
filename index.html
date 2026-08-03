@@ -48,15 +48,21 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:18px 2
 
 .panel{display:none}.panel.active{display:block}
 
-.hero{max-width:1250px;margin:0 auto;padding:72px 24px 56px;text-align:center}
+.hero{max-width:1250px;margin:0 auto;padding:72px 24px 56px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:10%;left:50%;transform:translateX(-50%);width:900px;height:900px;max-width:140vw;background:radial-gradient(circle,rgba(200,241,53,0.07) 0%,rgba(200,241,53,0.025) 35%,transparent 70%);pointer-events:none;z-index:-1}
 
-.side-rail{position:fixed;top:0;height:100vh;width:220px;display:none;flex-direction:column;justify-content:center;gap:22px;padding:24px;pointer-events:none;z-index:1}
-.side-rail-left{left:0}
-.side-rail-right{right:0}
-.side-msg{background:rgba(255,255,255,0.025);border:1px solid rgba(200,241,53,0.1);border-radius:12px;padding:12px 14px;opacity:0.55;transform:scale(0.96);transition:opacity 0.4s,transform 0.4s}
-.side-msg:hover{opacity:0.9;transform:scale(1)}
-.side-msg-name{font-size:11px;font-weight:700;color:rgba(200,241,53,0.7);margin-bottom:4px}
-.side-msg-text{font-size:11.5px;color:rgba(255,255,255,0.45);font-style:italic;line-height:1.4}
+.side-rail{position:fixed;top:0;height:100vh;width:240px;display:none;flex-direction:column;padding:24px;pointer-events:none;z-index:1}
+.side-rail-left{left:0;justify-content:flex-end;gap:14px}
+.side-rail-right{right:0;justify-content:center;align-items:center;text-align:center;gap:18px}
+.side-msg{background:rgba(200,241,53,0.045);border:1.5px solid rgba(200,241,53,0.3);border-radius:14px;padding:14px 16px;opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;box-shadow:0 0 24px rgba(200,241,53,0.08),0 8px 20px rgba(0,0,0,0.35);pointer-events:auto}
+.side-msg.enter{opacity:0.85;transform:translateY(0)}
+.side-msg:hover{opacity:1;transform:scale(1.04) translateY(0)}
+.side-msg-name{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.side-msg-text{font-size:13px;color:rgba(255,255,255,0.7);font-style:italic;line-height:1.5}
+
+.inspire-title{font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;line-height:1.4;max-width:170px}
+.inspire-quote{font-family:'Space Grotesk',sans-serif;font-size:17px;color:rgba(200,241,53,0.55);font-style:italic;line-height:1.5;max-width:190px;min-height:80px;text-shadow:0 0 18px rgba(200,241,53,0.25);opacity:0;transition:opacity 1s ease}
+.inspire-quote.show{opacity:1}
 @media(min-width:1500px){.side-rail{display:flex}}
 .badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(200,241,53,0.2);border-radius:20px;padding:6px 18px;margin-bottom:32px}
 .pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
@@ -115,6 +121,7 @@ h1 em{color:var(--accent);font-style:normal}
 
 /* AVATAR CARDS */
 .avatar-card{position:relative;cursor:pointer}
+.avatar-card:not(.ghost-card):hover .avatar{transform:scale(1.12)}
 .avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif;border:2px solid transparent;transition:all 0.15s;user-select:none;box-shadow:0 0 10px rgba(255,255,255,0.05)}
 .avatar:hover{transform:scale(1.15);border-color:var(--accent)}
 .avatar.gold-av{border-color:var(--gold)}
@@ -254,7 +261,10 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
 <!-- WALL PANEL -->
 <div class="panel active" id="panel-wall">
   <div class="side-rail side-rail-left" id="side-rail-left"></div>
-  <div class="side-rail side-rail-right" id="side-rail-right"></div>
+  <div class="side-rail side-rail-right" id="side-rail-right">
+    <div class="inspire-title" id="inspire-title">What could your message be?</div>
+    <div class="inspire-quote" id="inspire-quote"></div>
+  </div>
   <section class="hero">
     <div id="badge-block" style="display:none"><div class="badge"><span class="pulse"></span><span id="badge-txt">Live · ··· names</span></div></div>
     <h1 id="h1">One name. One message.<br><em>Forever.</em></h1>
@@ -277,7 +287,7 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
         <div class="last-name-msg lnb-tr-text" id="lnb-tr-text"></div>
       </div>
 
-      <div class="last-name-time" id="last-name-time"></div>
+      
     </div>
 
     <p class="hero-sub" id="sub">Your name, your message, your face — on the Wall forever. First 1000 spots are free!</p>
@@ -429,6 +439,7 @@ const T={
     why3:'To stay on the Wall forever',
     live_joined_ago:'{name} joined the Wall · {time}',
     live_joined_now:'{name} just joined!',
+    inspire_title:'What could your message be?',
   },
   ru:{
     badge:'Онлайн · {n} имён',h1:'Одно имя. Одно послание.<br><em>Навсегда.</em>',
@@ -476,6 +487,7 @@ const T={
     why3:'Чтобы навсегда остаться на Стене',
     live_joined_ago:'{name} присоединился к Стене · {time}',
     live_joined_now:'{name} только что присоединился!',
+    inspire_title:'Каким может быть твоё послание?',
   }
 };
 
@@ -514,6 +526,8 @@ function setLang(l){
   document.getElementById('why-1').textContent=t.why1;
   document.getElementById('why-2').textContent=t.why2;
   document.getElementById('why-3').textContent=t.why3;
+  document.getElementById('inspire-title').textContent=t.inspire_title;
+  if (typeof startInspireRail === 'function') { inspireIndex = -1; startInspireRail(); }
   document.getElementById('wall-lbl').textContent=t.wall_lbl;
   document.getElementById('searchInput').placeholder=t.search_ph;
   document.getElementById('tab-wall').textContent=t.tab_wall;
@@ -717,7 +731,6 @@ function updateLastName() {
   document.getElementById('lnb-tr-label').textContent = t.lnb_tr;
   document.getElementById('last-name-value').textContent = lastNameData.name;
   document.getElementById('last-name-msg').textContent = lastNameData.message ? `"${lastNameData.message}"` : '';
-  document.getElementById('last-name-time').textContent = lastNameData.created_at ? timeAgo(lastNameData.created_at) : t.just_now;
   block.style.display = 'block';
   maybeShowTranslation(lastNameData.message);
 }
@@ -798,22 +811,79 @@ function updateAllNewBlocks() {
 // Заполняет боковые "рельсы" настоящими сообщениями — на широких экранах
 // это превращает пустое пространство слева/справа в часть самой стены,
 // а не просто декор
-function updateSideRails(rows) {
+const MAX_LEFT_RAIL_ITEMS = 4;
+let leftRailPool = [];
+let leftRailUsedRecently = [];
+let leftRailTimer = null;
+
+function renderLeftRailItem(person) {
+  const msgText = person.message ? `"${person.message}"` : '';
+  const el = document.createElement('div');
+  el.className = 'side-msg';
+  el.innerHTML = `<div class="side-msg-name">${person.name}</div><div class="side-msg-text">${msgText}</div>`;
+  return el;
+}
+
+function addLeftRailItem() {
+  if (!leftRailPool.length) return;
+  // Стараемся не повторять один и тот же человек два раза подряд
+  let candidates = leftRailPool.filter(p => !leftRailUsedRecently.includes(p.name));
+  if (!candidates.length) candidates = leftRailPool;
+  const person = candidates[Math.floor(Math.random() * candidates.length)];
+
+  leftRailUsedRecently.push(person.name);
+  if (leftRailUsedRecently.length > 3) leftRailUsedRecently.shift();
+
+  const rail = document.getElementById('side-rail-left');
+  const el = renderLeftRailItem(person);
+  rail.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('enter'));
+
+  while (rail.children.length > MAX_LEFT_RAIL_ITEMS) {
+    rail.removeChild(rail.firstChild);
+  }
+}
+
+// Левая рельса: реальные участники постепенно появляются снизу вверх,
+// создавая ощущение растущей живой стены
+function startLeftRail(rows) {
   const withMsg = rows.filter(r => r.message && r.message.trim());
-  const pool = withMsg.length ? withMsg : rows;
-  if (!pool.length) return;
+  leftRailPool = withMsg.length ? withMsg : rows;
+  if (!leftRailPool.length) return;
 
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  const left = shuffled.slice(0, 3);
-  const right = shuffled.slice(3, 6).length ? shuffled.slice(3, 6) : shuffled.slice(0, 3);
+  document.getElementById('side-rail-left').innerHTML = '';
+  addLeftRailItem();
+  if (leftRailPool.length > 1) setTimeout(addLeftRailItem, 2500);
 
-  const render = (arr) => arr.map(r => {
-    const msgText = r.message ? `"${r.message}"` : '';
-    return `<div class="side-msg"><div class="side-msg-name">${r.name}</div><div class="side-msg-text">${msgText}</div></div>`;
-  }).join('');
+  if (leftRailTimer) clearInterval(leftRailTimer);
+  leftRailTimer = setInterval(addLeftRailItem, 6000 + Math.random() * 4000);
+}
 
-  document.getElementById('side-rail-left').innerHTML = render(left);
-  document.getElementById('side-rail-right').innerHTML = render(right);
+// Правая рельса: НЕ настоящие записи, а примеры идей для послания —
+// специально без аватаров и карточек, чтобы не путать с реальными участниками
+const INSPIRE_QUOTES = {
+  en: ['Never give up.', 'Call your parents.', 'Be kind.', 'Say "I love you" more often.', 'Forgive.', 'Protect your dreams.', 'Thank someone today.', 'Live honestly.', "Don't be afraid to start.", 'Leave something good behind.'],
+  ru: ['Никогда не сдавайся.', 'Позвони родителям.', 'Будь добрым.', 'Чаще говори «я люблю тебя».', 'Прости.', 'Береги свои мечты.', 'Поблагодари кого-то сегодня.', 'Живи честно.', 'Не бойся начать.', 'Оставь после себя что-то хорошее.']
+};
+let inspireIndex = 0;
+let inspireTimer = null;
+function cycleInspireQuote() {
+  const el = document.getElementById('inspire-quote');
+  const list = INSPIRE_QUOTES[lang] || INSPIRE_QUOTES.en;
+  el.classList.remove('show');
+  setTimeout(() => {
+    inspireIndex = (inspireIndex + 1) % list.length;
+    el.textContent = `"${list[inspireIndex]}"`;
+    el.classList.add('show');
+  }, 500);
+}
+function startInspireRail() {
+  const el = document.getElementById('inspire-quote');
+  const list = INSPIRE_QUOTES[lang] || INSPIRE_QUOTES.en;
+  el.textContent = `"${list[0]}"`;
+  requestAnimationFrame(() => el.classList.add('show'));
+  if (inspireTimer) clearInterval(inspireTimer);
+  inspireTimer = setInterval(cycleInspireQuote, 4000);
 }
 
 function renderDemoWall(){
@@ -845,7 +915,7 @@ async function loadRealNames() {
     addGhostBricks(total);
     updateStats();
     updateAllNewBlocks();
-    updateSideRails(rows);
+    startLeftRail(rows);
     startLiveTicker(rows);
   } catch(e) {
     console.log('Supabase unreachable, falling back to demo wall');
@@ -897,6 +967,7 @@ if (SUPABASE_URL !== 'https://YOUR_PROJECT.supabase.co') {
 } else {
   renderDemoWall();
 }
+startInspireRail();
 // ─────────────────────────────────────────────────────────────────
 
 function updateStats(){
