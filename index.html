@@ -51,18 +51,20 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:18px 2
 .hero{max-width:1250px;margin:0 auto;padding:72px 24px 56px;text-align:center;position:relative}
 .hero::before{content:'';position:absolute;top:10%;left:50%;transform:translateX(-50%);width:900px;height:900px;max-width:140vw;background:radial-gradient(circle,rgba(200,241,53,0.07) 0%,rgba(200,241,53,0.025) 35%,transparent 70%);pointer-events:none;z-index:-1}
 
-.side-rail{position:fixed;top:0;height:100vh;width:240px;display:none;flex-direction:column;padding:24px;pointer-events:none;z-index:1}
-.side-rail-left{left:0;justify-content:flex-end;gap:14px}
-.side-rail-right{right:0;justify-content:center;align-items:center;text-align:center;gap:18px}
-.side-msg{background:rgba(200,241,53,0.045);border:1.5px solid rgba(200,241,53,0.3);border-radius:14px;padding:14px 16px;opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;box-shadow:0 0 24px rgba(200,241,53,0.08),0 8px 20px rgba(0,0,0,0.35);pointer-events:auto}
-.side-msg.enter{opacity:0.85;transform:translateY(0)}
-.side-msg:hover{opacity:1;transform:scale(1.04) translateY(0)}
-.side-msg-name{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:6px}
-.side-msg-text{font-size:13px;color:rgba(255,255,255,0.7);font-style:italic;line-height:1.5}
+.side-rail{position:fixed;top:0;height:100vh;width:260px;display:none;flex-direction:column;justify-content:center;align-items:center;padding:24px;pointer-events:none;z-index:1;overflow:hidden}
+.side-rail-left{left:0}
+.side-rail-right{right:0}
 
-.inspire-title{font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;line-height:1.4;max-width:170px}
-.inspire-quote{font-family:'Space Grotesk',sans-serif;font-size:17px;color:rgba(200,241,53,0.55);font-style:italic;line-height:1.5;max-width:190px;min-height:80px;text-shadow:0 0 18px rgba(200,241,53,0.25);opacity:0;transition:opacity 1s ease}
-.inspire-quote.show{opacity:1}
+@keyframes floatUp{0%{opacity:0;transform:translateY(60px)}12%{opacity:1;transform:translateY(0)}82%{opacity:1;transform:translateY(-14px)}100%{opacity:0;transform:translateY(-70px)}}
+.float-msg{text-align:center;opacity:0}
+.float-msg.playing{animation:floatUp 8s ease-in-out}
+
+.side-msg{background:rgba(200,241,53,0.06);border:1.5px solid rgba(200,241,53,0.4);border-radius:14px;padding:16px 18px;box-shadow:0 0 28px rgba(200,241,53,0.12),0 8px 20px rgba(0,0,0,0.35);pointer-events:auto;max-width:210px}
+.side-msg-name{font-size:15px;font-weight:800;color:var(--accent);margin-bottom:7px}
+.side-msg-text{font-size:14px;color:rgba(255,255,255,0.85);font-style:italic;line-height:1.5}
+
+.inspire-title{font-size:13px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.1em;font-weight:800;line-height:1.4;max-width:190px;margin:0 auto 20px}
+.inspire-quote{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;color:rgba(200,241,53,0.85);font-style:italic;line-height:1.5;max-width:200px}
 @media(min-width:1500px){.side-rail{display:flex}}
 .badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(200,241,53,0.2);border-radius:20px;padding:6px 18px;margin-bottom:32px}
 .pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
@@ -260,10 +262,12 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
 
 <!-- WALL PANEL -->
 <div class="panel active" id="panel-wall">
-  <div class="side-rail side-rail-left" id="side-rail-left"></div>
+  <div class="side-rail side-rail-left" id="side-rail-left">
+    <div class="float-msg" id="left-float"></div>
+  </div>
   <div class="side-rail side-rail-right" id="side-rail-right">
     <div class="inspire-title" id="inspire-title">What could your message be?</div>
-    <div class="inspire-quote" id="inspire-quote"></div>
+    <div class="float-msg" id="right-float"><div class="inspire-quote" id="inspire-quote"></div></div>
   </div>
   <section class="hero">
     <div id="badge-block" style="display:none"><div class="badge"><span class="pulse"></span><span id="badge-txt">Live · ··· names</span></div></div>
@@ -527,7 +531,7 @@ function setLang(l){
   document.getElementById('why-2').textContent=t.why2;
   document.getElementById('why-3').textContent=t.why3;
   document.getElementById('inspire-title').textContent=t.inspire_title;
-  if (typeof startInspireRail === 'function') { inspireIndex = -1; startInspireRail(); }
+  if (typeof startInspireRail === 'function') { inspireRecentlyUsed = []; startInspireRail(); }
   document.getElementById('wall-lbl').textContent=t.wall_lbl;
   document.getElementById('searchInput').placeholder=t.search_ph;
   document.getElementById('tab-wall').textContent=t.tab_wall;
@@ -811,22 +815,23 @@ function updateAllNewBlocks() {
 // Заполняет боковые "рельсы" настоящими сообщениями — на широких экранах
 // это превращает пустое пространство слева/справа в часть самой стены,
 // а не просто декор
-const MAX_LEFT_RAIL_ITEMS = 4;
 let leftRailPool = [];
 let leftRailUsedRecently = [];
 let leftRailTimer = null;
+const FLOAT_DURATION_MS = 8000;
 
-function renderLeftRailItem(person) {
-  const msgText = person.message ? `"${person.message}"` : '';
-  const el = document.createElement('div');
-  el.className = 'side-msg';
-  el.innerHTML = `<div class="side-msg-name">${person.name}</div><div class="side-msg-text">${msgText}</div>`;
-  return el;
+function restartFloat(el, renderFn) {
+  el.classList.remove('playing');
+  // Форсируем reflow, чтобы анимация гарантированно перезапустилась с начала
+  void el.offsetWidth;
+  renderFn();
+  el.classList.add('playing');
 }
 
+// Левая рельса: одно настоящее сообщение медленно всплывает снизу вверх,
+// исчезает наверху, и через паузу всплывает следующее
 function addLeftRailItem() {
   if (!leftRailPool.length) return;
-  // Стараемся не повторять один и тот же человек два раза подряд
   let candidates = leftRailPool.filter(p => !leftRailUsedRecently.includes(p.name));
   if (!candidates.length) candidates = leftRailPool;
   const person = candidates[Math.floor(Math.random() * candidates.length)];
@@ -834,56 +839,66 @@ function addLeftRailItem() {
   leftRailUsedRecently.push(person.name);
   if (leftRailUsedRecently.length > 3) leftRailUsedRecently.shift();
 
-  const rail = document.getElementById('side-rail-left');
-  const el = renderLeftRailItem(person);
-  rail.appendChild(el);
-  requestAnimationFrame(() => el.classList.add('enter'));
-
-  while (rail.children.length > MAX_LEFT_RAIL_ITEMS) {
-    rail.removeChild(rail.firstChild);
-  }
+  const el = document.getElementById('left-float');
+  restartFloat(el, () => {
+    const msgText = person.message ? `"${person.message}"` : '';
+    el.innerHTML = `<div class="side-msg"><div class="side-msg-name">${person.name}</div><div class="side-msg-text">${msgText}</div></div>`;
+  });
 }
 
-// Левая рельса: реальные участники постепенно появляются снизу вверх,
-// создавая ощущение растущей живой стены
 function startLeftRail(rows) {
   const withMsg = rows.filter(r => r.message && r.message.trim());
   leftRailPool = withMsg.length ? withMsg : rows;
   if (!leftRailPool.length) return;
 
-  document.getElementById('side-rail-left').innerHTML = '';
   addLeftRailItem();
-  if (leftRailPool.length > 1) setTimeout(addLeftRailItem, 2500);
-
   if (leftRailTimer) clearInterval(leftRailTimer);
-  leftRailTimer = setInterval(addLeftRailItem, 6000 + Math.random() * 4000);
+  leftRailTimer = setInterval(addLeftRailItem, FLOAT_DURATION_MS);
 }
 
 // Правая рельса: НЕ настоящие записи, а примеры идей для послания —
-// специально без аватаров и карточек, чтобы не путать с реальными участниками
+// специально без аватаров и карточек, чтобы не путать с реальными участниками.
+// Тоже всплывает снизу вверх, одна фраза за раз.
 const INSPIRE_QUOTES = {
-  en: ['Never give up.', 'Call your parents.', 'Be kind.', 'Say "I love you" more often.', 'Forgive.', 'Protect your dreams.', 'Thank someone today.', 'Live honestly.', "Don't be afraid to start.", 'Leave something good behind.'],
-  ru: ['Никогда не сдавайся.', 'Позвони родителям.', 'Будь добрым.', 'Чаще говори «я люблю тебя».', 'Прости.', 'Береги свои мечты.', 'Поблагодари кого-то сегодня.', 'Живи честно.', 'Не бойся начать.', 'Оставь после себя что-то хорошее.']
+  ru: [
+    'Берегите родителей.', 'Я просто люблю свою маму.', 'Позвони домой.', 'Скажи «люблю», пока есть кому.', 'Спасибо, мама.', 'Папа, я помню.',
+    'Никогда не сдавайся.', 'Умей вовремя остановиться.', 'Живи честно.', 'Не бойся начать сначала.', 'Всё проходит.', 'Верь в себя.', 'Не откладывай жизнь.', 'Сегодня — тоже шанс.',
+    'Будь добрее.', 'Слушай больше, чем говоришь.', 'Не суди, пока не поймёшь.', 'Прощение делает сильнее.', 'Помогай без причины.', 'Каждый проходит свою битву.',
+    'Следуй своей мечте.', 'Создавай, а не копируй.', 'Ошибаться — нормально.', 'Не бойся быть собой.', 'Начни сегодня.', 'Лучше попробовать.',
+    'Не забывай жить.', 'Дыши.', 'Всё получится.', 'Свет всегда рядом.', 'Ты не один.', 'Время бесценно.', 'Не сдавайся.', 'Помни.', 'Благодари.', 'Люби.',
+    'Что останется после тебя?', 'Как тебя будут помнить?', 'Если бы это были последние слова?', 'Что бы ты хотел оставить миру?', 'Одна фраза. Навсегда.', 'Миллионы увидят. Что ты скажешь?',
+    'Береги тех, кто ещё рядом.', 'Не жди идеального момента.', 'Не забывай звонить родителям.', 'Иногда доброта меняет всё.', 'Самые важные слова говорят слишком поздно.', 'Всё, что у тебя есть сейчас, однажды станет воспоминанием.', 'Когда-нибудь это прочитает незнакомец. Что ты хочешь ему сказать?'
+  ],
+  en: [
+    'Cherish your parents.', 'I just love my mom.', 'Call home.', 'Say "I love you" while you still can.', 'Thank you, Mom.', 'Dad, I remember.',
+    'Never give up.', 'Know when to stop.', 'Live honestly.', "Don't be afraid to start over.", 'This too shall pass.', 'Believe in yourself.', "Don't postpone your life.", 'Today is a chance too.',
+    'Be kinder.', 'Listen more than you speak.', "Don't judge until you understand.", 'Forgiveness makes you stronger.', 'Help without a reason.', 'Everyone is fighting their own battle.',
+    'Follow your dream.', "Create, don't copy.", "It's okay to fail.", "Don't be afraid to be yourself.", 'Start today.', 'Better to have tried.',
+    "Don't forget to live.", 'Breathe.', 'It will all work out.', 'The light is always near.', 'You are not alone.', 'Time is priceless.', "Don't give up.", 'Remember.', 'Be grateful.', 'Love.',
+    'What will remain after you?', 'How will you be remembered?', 'What if these were your last words?', 'What would you want to leave the world?', 'One phrase. Forever.', 'Millions will see it. What will you say?',
+    'Cherish those still with you.', "Don't wait for the perfect moment.", "Don't forget to call your parents.", 'Sometimes kindness changes everything.', 'The most important words are often said too late.', 'Everything you have now will one day become a memory.', 'Someday a stranger will read this. What do you want to tell them?'
+  ]
 };
-let inspireIndex = 0;
+let inspireRecentlyUsed = [];
 let inspireTimer = null;
 function cycleInspireQuote() {
-  const el = document.getElementById('inspire-quote');
   const list = INSPIRE_QUOTES[lang] || INSPIRE_QUOTES.en;
-  el.classList.remove('show');
-  setTimeout(() => {
-    inspireIndex = (inspireIndex + 1) % list.length;
-    el.textContent = `"${list[inspireIndex]}"`;
-    el.classList.add('show');
-  }, 500);
+  const el = document.getElementById('right-float');
+  restartFloat(el, () => {
+    // Избегаем повторов среди последних показанных фраз — с таким большим
+    // списком (49 штук) повторения будут случаться редко
+    let candidates = list.filter((_, i) => !inspireRecentlyUsed.includes(i));
+    if (!candidates.length) candidates = list;
+    const idx = list.indexOf(candidates[Math.floor(Math.random() * candidates.length)]);
+    inspireRecentlyUsed.push(idx);
+    if (inspireRecentlyUsed.length > 15) inspireRecentlyUsed.shift();
+    document.getElementById('inspire-quote').textContent = `"${list[idx]}"`;
+  });
 }
 function startInspireRail() {
-  const el = document.getElementById('inspire-quote');
-  const list = INSPIRE_QUOTES[lang] || INSPIRE_QUOTES.en;
-  el.textContent = `"${list[0]}"`;
-  requestAnimationFrame(() => el.classList.add('show'));
+  cycleInspireQuote();
   if (inspireTimer) clearInterval(inspireTimer);
-  inspireTimer = setInterval(cycleInspireQuote, 4000);
+  inspireTimer = setInterval(cycleInspireQuote, FLOAT_DURATION_MS);
 }
 
 function renderDemoWall(){
