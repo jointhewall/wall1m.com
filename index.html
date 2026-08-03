@@ -55,7 +55,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:18px 2
 .side-rail-left{right:calc(50% + 420px)}
 .side-rail-right{left:calc(50% + 420px)}
 
-@keyframes floatUp{0%{opacity:0;transform:translateY(60px)}12%{opacity:1;transform:translateY(0)}82%{opacity:1;transform:translateY(-14px)}100%{opacity:0;transform:translateY(-70px)}}
+@keyframes floatUp{0%{opacity:0;transform:translateY(150px)}15%{opacity:1;transform:translateY(60px)}50%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(-60px)}100%{opacity:0;transform:translateY(-150px)}}
 .float-msg{text-align:center;opacity:0}
 .float-msg.playing{animation:floatUp 11s ease-in-out}
 
@@ -63,8 +63,8 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:18px 2
 .side-msg-name{font-size:15px;font-weight:800;color:var(--accent);margin-bottom:7px}
 .side-msg-text{font-size:14px;color:rgba(255,255,255,0.85);font-style:italic;line-height:1.5}
 
-.inspire-title{font-size:13px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.1em;font-weight:800;line-height:1.4;max-width:190px;margin:0 auto 20px}
-.inspire-quote{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;color:rgba(200,241,53,0.85);font-style:italic;line-height:1.5;max-width:200px}
+.inspire-title{font-size:13px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.1em;font-weight:800;line-height:1.4;max-width:190px;margin:0 auto 20px;text-align:center}
+.inspire-quote{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;color:rgba(200,241,53,0.85);font-style:italic;line-height:1.5;max-width:200px;text-align:center;margin:0 auto}
 @media(min-width:1300px){.side-rail{display:flex}}
 .badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(200,241,53,0.2);border-radius:20px;padding:6px 18px;margin-bottom:32px}
 .pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
