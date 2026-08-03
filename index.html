@@ -53,9 +53,10 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:18px 2
 
 .side-rail{position:fixed;top:420px;height:calc(100vh - 420px);width:190px;display:none;flex-direction:column;justify-content:center;align-items:center;padding:16px;pointer-events:none;z-index:1;overflow:hidden}
 .side-rail-left{right:calc(50% + 420px)}
-.side-rail-right{left:calc(50% + 420px)}
+.side-rail-right{left:calc(50% + 420px);justify-content:flex-start}
+.float-wrap{flex:1;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
 
-@keyframes floatUp{0%{opacity:0;transform:translateY(150px)}15%{opacity:1;transform:translateY(60px)}50%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(-60px)}100%{opacity:0;transform:translateY(-150px)}}
+@keyframes floatUp{0%{opacity:0;transform:translateY(140px)}10%{opacity:1;transform:translateY(110px)}50%{opacity:1;transform:translateY(0)}90%{opacity:1;transform:translateY(-110px)}100%{opacity:0;transform:translateY(-140px)}}
 .float-msg{text-align:center;opacity:0}
 .float-msg.playing{animation:floatUp 11s ease-in-out}
 
@@ -63,7 +64,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:18px 2
 .side-msg-name{font-size:15px;font-weight:800;color:var(--accent);margin-bottom:7px}
 .side-msg-text{font-size:14px;color:rgba(255,255,255,0.85);font-style:italic;line-height:1.5}
 
-.inspire-title{font-size:13px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.1em;font-weight:800;line-height:1.4;max-width:190px;margin:0 auto 20px;text-align:center}
+.inspire-title{font-size:13px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.1em;font-weight:800;line-height:1.4;max-width:190px;margin:0 auto 40px;text-align:center;flex-shrink:0}
 .inspire-quote{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;color:rgba(200,241,53,0.85);font-style:italic;line-height:1.5;max-width:200px;text-align:center;margin:0 auto}
 @media(min-width:1300px){.side-rail{display:flex}}
 .badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(200,241,53,0.2);border-radius:20px;padding:6px 18px;margin-bottom:32px}
@@ -267,7 +268,9 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
   </div>
   <div class="side-rail side-rail-right" id="side-rail-right">
     <div class="inspire-title" id="inspire-title">What could your message be?</div>
-    <div class="float-msg" id="right-float"><div class="inspire-quote" id="inspire-quote"></div></div>
+    <div class="float-wrap">
+      <div class="float-msg" id="right-float"><div class="inspire-quote" id="inspire-quote"></div></div>
+    </div>
   </div>
   <section class="hero">
     <div id="badge-block" style="display:none"><div class="badge"><span class="pulse"></span><span id="badge-txt">Live · ··· names</span></div></div>
