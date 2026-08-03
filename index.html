@@ -51,9 +51,9 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:18px 2
 .hero{max-width:1250px;margin:0 auto;padding:72px 24px 56px;text-align:center;position:relative}
 .hero::before{content:'';position:absolute;top:10%;left:50%;transform:translateX(-50%);width:900px;height:900px;max-width:140vw;background:radial-gradient(circle,rgba(200,241,53,0.07) 0%,rgba(200,241,53,0.025) 35%,transparent 70%);pointer-events:none;z-index:-1}
 
-.side-rail{position:fixed;top:0;height:100vh;width:190px;display:none;flex-direction:column;justify-content:center;align-items:center;padding:16px;pointer-events:none;z-index:1;overflow:hidden}
-.side-rail-left{right:calc(50% + 640px)}
-.side-rail-right{left:calc(50% + 640px)}
+.side-rail{position:fixed;top:420px;height:calc(100vh - 420px);width:190px;display:none;flex-direction:column;justify-content:center;align-items:center;padding:16px;pointer-events:none;z-index:1;overflow:hidden}
+.side-rail-left{right:calc(50% + 420px)}
+.side-rail-right{left:calc(50% + 420px)}
 
 @keyframes floatUp{0%{opacity:0;transform:translateY(60px)}12%{opacity:1;transform:translateY(0)}82%{opacity:1;transform:translateY(-14px)}100%{opacity:0;transform:translateY(-70px)}}
 .float-msg{text-align:center;opacity:0}
@@ -65,7 +65,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:18px 2
 
 .inspire-title{font-size:13px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.1em;font-weight:800;line-height:1.4;max-width:190px;margin:0 auto 20px}
 .inspire-quote{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;color:rgba(200,241,53,0.85);font-style:italic;line-height:1.5;max-width:200px}
-@media(min-width:1700px){.side-rail{display:flex}}
+@media(min-width:1300px){.side-rail{display:flex}}
 .badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(200,241,53,0.2);border-radius:20px;padding:6px 18px;margin-bottom:32px}
 .pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
