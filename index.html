@@ -299,19 +299,6 @@ footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-si
 
     <p class="hero-sub" id="sub">Your name, your message, your face — on the Wall forever. First 1000 spots are free!</p>
 
-    <div id="stats-block" style="display:none">
-    <div class="stats">
-      <div class="stat"><div class="stat-num" id="count">···</div><div class="stat-label" id="lbl-names">names</div></div>
-      <div class="stat"><div class="stat-num" id="dollars">···</div><div class="stat-label" id="lbl-raised">raised</div></div>
-      <div class="stat"><div class="stat-num" id="left">···</div><div class="stat-label" id="lbl-left">spots left</div></div>
-    </div>
-
-    <div class="progress-wrap">
-      <div class="progress-labels"><span id="pct">···</span><span id="goal-lbl">goal: 1,000,000</span></div>
-      <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
-    </div>
-    </div>
-
     <p class="the-question" id="the-question">If millions of people could read only one phrase of yours… what would it be?</p>
 
     <div class="name-row">
@@ -517,11 +504,6 @@ function setLang(l){
   document.getElementById('h1').innerHTML=t.h1;
   document.getElementById('sub').textContent=t.sub;
   document.getElementById('the-question').textContent=t.the_question;
-  document.getElementById('lbl-names').textContent=t.lbl_names;
-  document.getElementById('lbl-raised').textContent=t.lbl_raised;
-  document.getElementById('lbl-left').textContent=t.lbl_left;
-  document.getElementById('pct').textContent=(total/10000).toFixed(1)+t.pct;
-  document.getElementById('goal-lbl').textContent=t.goal;
   document.getElementById('nameInput').placeholder=t.placeholder;
   document.getElementById('tg-lbl').textContent=t.tg_lbl;
   document.getElementById('note').textContent=t.note;
@@ -989,20 +971,10 @@ startInspireRail();
 // ─────────────────────────────────────────────────────────────────
 
 function updateStats(){
-  const left=1000000-total;
-  const raised=total*2;
-  const raisedStr = raised < 1000 ? '$'+raised : '$'+Math.round(raised/1000)+'k';
-  document.getElementById('count').textContent=total.toLocaleString();
   document.getElementById('badge-txt').textContent=T[lang].badge.replace('{n}',total.toLocaleString());
-  document.getElementById('dollars').textContent=raisedStr;
-  document.getElementById('left').textContent=Math.round(left/1000)+'k';
-  const pct=(total/10000).toFixed(1);
-  document.getElementById('pct').textContent=pct+T[lang].pct;
-  document.getElementById('pfill').style.width=pct+'%';
 
-  // Показываем статистику только когда есть хотя бы 5 реальных участников
+  // Показываем бейдж только когда есть хотя бы 5 реальных участников
   const show = total > 5 ? 'block' : 'none';
-  document.getElementById('stats-block').style.display = show;
   document.getElementById('badge-block').style.display = show;
 }
 
